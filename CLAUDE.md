@@ -9,7 +9,7 @@ One-page dashboard of the Design Team's DRs (deliverable requests), built from t
 - Drive folder with the month sheets: `1rr6kEhm_DtRlSWPU6C6lRQheCNlaYU6D` (owner nitesh@sugarcosmetics.com)
 - Basecamp account: `3985435`
 - Failure alerts: nitesh@sugarcosmetics.com
-- Refresh: scheduled Claude task, `CRON_TZ=Asia/Kolkata 36 10,16 * * *`
+- Refresh: Claude Code **cloud routine** at 10:36 and 16:36 IST (`6 5,11 * * *` UTC), runs with PCs off. Setup, needs and prompt: `scripts/refresh-routine.md`
 - Secrets live only in Vercel env vars (Sensitive): `BASECAMP_CLIENT_ID`, `BASECAMP_CLIENT_SECRET`, `BASECAMP_REFRESH_TOKEN`
 
 ## How the sheets are laid out (differs from the original starter kit)

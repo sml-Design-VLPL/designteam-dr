@@ -28,6 +28,8 @@ Check the URL is **https://designteam-dr.vercel.app**. If it's different, tell C
 4. Check https://designteam-dr.vercel.app/api/basecamp/closed shows `"ok": true`.
 
 ## 4. Scheduled refresh (twice a day)
+> Now a cloud routine: see `scripts/refresh-routine.md` (current prompt and the two one-time setup needs). The text below is the original plan.
+
 **Create this from a Claude coding session where `git push` to the repo already works**, and make sure the task
 shows **automatic approval**. A task made from a plain chat reports "success" but never updates the site.
 First make a one-time copy that runs 2–3 minutes later and check a new commit appears and the site's
