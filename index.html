@@ -1,0 +1,619 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Design Team · DR Dashboard</title>
+<style>
+  :root{
+    --bg:#F3F4FA; --side:#FFFFFF; --panel:#FFFFFF; --panel2:#F6F5FD; --line:#ECEBF5;
+    --fg:#2B2D42; --muted:#7D8199; --dim:#A6A9BE;
+    --or:#7C6CF2; --or2:#6555E0; --or-soft:rgba(124,108,242,.12); --grey:#E7E5F4;
+    --teal:#2FCFC0; --blue:#5B9DF0; --lav:#A99BF6;
+    --g-lav:linear-gradient(135deg,#C3B5F8 0%,#9C8CF2 100%);
+    --g-teal:linear-gradient(135deg,#6FE6D6 0%,#45BDEB 100%);
+    --g-pur:linear-gradient(135deg,#B095F8 0%,#7A5CF2 100%);
+    --g-blue:linear-gradient(135deg,#93C3F8 0%,#5E8FEE 100%);
+    --shadow:0 8px 28px rgba(110,96,220,.08);
+    --up:#22B07D; --down:#EC6A6A; --bad:#EE5468; --bad-soft:rgba(238,84,104,.12);
+    --r:18px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{background:var(--bg) radial-gradient(circle at 92% 8%,rgba(169,155,246,.22) 0,transparent 260px) no-repeat,var(--bg) radial-gradient(circle at 4% 96%,rgba(111,230,214,.18) 0,transparent 240px) no-repeat;background-attachment:fixed;color:var(--fg);font-family:"Inter","SF Pro Display",-apple-system,"Segoe UI",Roboto,sans-serif;-webkit-font-smoothing:antialiased}
+  button{font:inherit}
+  .app{display:grid;grid-template-columns:232px minmax(0,1fr);min-height:100vh}
+  /* sidebar */
+  .side{background:var(--side);border-right:1px solid var(--line);box-shadow:var(--shadow);padding:28px 18px;display:flex;flex-direction:column;gap:28px;position:sticky;top:0;height:100vh;overflow:auto}
+  .brand{display:flex;align-items:center;gap:10px}
+  .logo{width:34px;height:34px;border-radius:50%;background:var(--g-pur);display:grid;place-items:center;font-weight:800;color:#fff;font-size:15px}
+  .brand b{display:block;font-size:14px}.brand span{font-size:11px;color:var(--muted)}
+  .nav-h{font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--dim);margin:0 10px 8px}
+  .months{display:flex;flex-direction:column;gap:2px}
+  .mbtn{all:unset;cursor:pointer;display:flex;justify-content:space-between;align-items:center;padding:10px 12px;border-radius:10px;color:var(--muted);font-size:14px}
+  .mbtn:hover{background:var(--panel2)}
+  .mbtn.on{background:var(--g-pur);color:#fff;font-weight:600;box-shadow:0 6px 16px rgba(124,108,242,.28)}
+  .mbtn .c{font-size:12px;opacity:.8}
+  .mbtn.all{margin-bottom:6px;border:1px solid var(--line)}
+  .mbtn.all.on{border-color:var(--or)}
+  :focus-visible{outline:2px solid var(--or);outline-offset:2px}
+  .side-foot{margin-top:auto;font-size:11px;color:var(--dim);line-height:1.6;padding:0 10px}
+  .side-foot a{color:var(--or2);text-decoration:none}
+  /* main */
+  main{padding:32px 36px 48px;max-width:1500px;width:100%;min-width:0}
+  header{display:flex;justify-content:space-between;align-items:flex-end;gap:16px;margin-bottom:20px;flex-wrap:wrap}
+  h1{font-size:30px;font-weight:600;letter-spacing:-.02em}
+  .eyebrow{font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--or2);margin-bottom:8px}
+  h1 .b{color:var(--muted);font-weight:500}
+  .sub{color:var(--muted);font-size:13px;margin-top:6px}
+  .stamp{font-size:12px;color:var(--muted);background:var(--panel);border:1px solid var(--line);box-shadow:var(--shadow);padding:8px 14px;border-radius:999px;white-space:nowrap}
+  .stamp i{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--teal);margin-right:8px;vertical-align:1px}
+  /* brand filter */
+  .filters{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:22px}
+  .filters .lab{font-size:12px;color:var(--dim);margin-right:4px}
+  .pill{all:unset;cursor:pointer;font-size:13px;padding:7px 14px;border-radius:999px;border:1px solid var(--line);color:var(--muted);background:var(--panel)}
+  .pill:hover{color:var(--fg);border-color:var(--lav)}
+  .pill.on{background:var(--or);color:#fff;border-color:var(--or);font-weight:600}
+  .grid{display:grid;gap:16px}
+  .kpis{grid-template-columns:repeat(4,1fr)}
+  .card{background:var(--panel);border:1px solid var(--line);box-shadow:var(--shadow);border-radius:var(--r);padding:20px 22px;min-width:0}
+  .card h3{font-size:13px;font-weight:500;color:var(--muted);display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;gap:8px}
+  .card h3 small{font-size:11px;color:var(--dim);font-weight:400}
+  .kpi .v{font-size:40px;font-weight:600;letter-spacing:-.03em;line-height:1}
+  .kpi .n{font-size:12px;color:var(--muted);margin-top:10px}
+  .kpis .kpi{border:0;color:#fff;background:var(--g-lav);box-shadow:0 10px 26px rgba(124,108,242,.22)}
+  .kpis .kpi h3,.kpis .kpi .n{color:rgba(255,255,255,.88)}
+  .kpi.hero{background:var(--g-teal);box-shadow:0 10px 26px rgba(69,189,235,.25)}
+  .kpis .kpi:nth-child(3){background:var(--g-pur)}
+  .kpi.alert{background:var(--g-blue);box-shadow:0 10px 26px rgba(94,143,238,.25)}
+  .kpi.alert h3::before{content:"";width:8px;height:8px;border-radius:50%;background:#fff;box-shadow:0 0 0 3px rgba(238,84,104,.85);margin-right:9px}
+  .kpi.alert h3{justify-content:flex-start}
+  .ico{width:30px;height:30px;border-radius:50%;background:var(--panel2);display:grid;place-items:center}
+  .hero .ico{background:rgba(255,255,255,.2)}
+  .sec{margin-top:16px}
+  .row2{grid-template-columns:2fr 1fr}
+  .row3{grid-template-columns:1fr 1fr}
+  /* month-on-month strip */
+  .strip{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px}
+  .mc{all:unset;cursor:pointer;background:var(--panel2);border:1px solid transparent;border-radius:14px;padding:14px 14px 12px;display:flex;flex-direction:column;gap:6px;min-width:0}
+  .mc:hover{border-color:var(--lav)}
+  .mc.on{border-color:var(--or);background:linear-gradient(180deg,rgba(124,108,242,.14),rgba(124,108,242,.03))}
+  .mc .mn{font-size:12px;color:var(--muted)}
+  .mc .mv{font-size:28px;font-weight:600;letter-spacing:-.02em;line-height:1.05}
+  .mc .md{font-size:12px;color:var(--dim);white-space:nowrap}
+  .mc .md b{font-weight:600;color:var(--muted)}
+  .mc .md b.live{color:var(--or2);font-weight:500}
+  .up{color:var(--up)} .down{color:var(--down)}
+  .mini{height:4px;border-radius:999px;background:var(--grey);overflow:hidden;margin-top:4px}
+  .mini i{display:block;height:100%;background:var(--g-pur)}
+  .mc .mf{font-size:11px;color:var(--dim)}
+  /* brand cards */
+  .bgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}
+  .bc{all:unset;cursor:pointer;background:var(--panel2);border:1px solid transparent;border-radius:14px;padding:16px;display:flex;flex-direction:column;gap:6px;min-width:0}
+  .bc:hover{border-color:var(--lav)}
+  .bc.on{border-color:var(--or)}
+  .bc .bn{font-size:12px;color:var(--muted);letter-spacing:.06em;text-transform:uppercase}
+  .bc .bv{font-size:28px;font-weight:600;letter-spacing:-.02em}
+  .bc .bs{font-size:12px;color:var(--dim)}
+  .share{height:4px;border-radius:999px;background:var(--grey);overflow:hidden}
+  .share i{display:block;height:100%;background:var(--g-teal)}
+  svg text{font-family:inherit}
+  .legend{display:flex;gap:16px;font-size:11px;color:var(--muted);margin-top:10px}
+  .legend span::before{content:"";display:inline-block;width:8px;height:8px;border-radius:2px;margin-right:6px;background:var(--c)}
+  .bars{display:flex;flex-direction:column;gap:12px}
+  .bar-row{display:grid;grid-template-columns:96px 1fr 50px;align-items:center;gap:10px;font-size:13px}
+  .bar-row .lbl{color:var(--fg);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .bar-row .num{text-align:right;color:var(--muted);font-variant-numeric:tabular-nums}
+  .track{height:10px;background:transparent;display:flex;gap:2px}
+  .seg{border-radius:4px;min-width:0}
+  .seg{height:100%}
+  .tag{display:inline-block;font-size:11px;padding:3px 9px;border-radius:999px;background:var(--panel2);color:var(--muted);white-space:nowrap}
+  .tag.od{background:var(--bad-soft);color:#D9435A}
+  .tag.ok{background:rgba(47,207,192,.14);color:#159C8F}
+  .tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(78px,1fr));gap:10px}
+  .tile{background:var(--panel2);border-radius:12px;padding:14px 12px}
+  .tile b{display:block;font-size:24px;font-weight:600}
+  .tile span{font-size:12px;color:var(--muted)}
+  .empty{color:var(--dim);font-size:13px;padding:18px 0}
+  .ta{display:grid;grid-template-columns:repeat(3,1fr) 1.4fr;gap:10px}
+  .ta .t{background:var(--panel2);border-radius:14px;padding:16px;min-width:0}
+  .ta .t b{display:block;font-size:28px;font-weight:600;letter-spacing:-.02em;line-height:1.1}
+  .ta .t span{display:block;font-size:12px;color:var(--muted);margin-top:6px}
+  .ta .t small{display:block;font-size:12px;color:var(--dim);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .ta .ppl{display:flex;flex-direction:column;gap:8px;font-size:13px}
+  .ta .ppl div{display:flex;justify-content:space-between;gap:10px}
+  .ta .ppl em{font-style:normal;color:var(--muted);font-variant-numeric:tabular-nums}
+  @media (max-width:1100px){.ta{grid-template-columns:repeat(3,1fr)}.ta .t.wide{grid-column:1/-1}}
+  @media (max-width:760px){.ta{grid-template-columns:1fr 1fr}}
+  #att,#cl{overflow-x:auto;-webkit-overflow-scrolling:touch}
+  table{width:100%;border-collapse:collapse;font-size:13px}
+  th{text-align:left;font-weight:500;color:var(--dim);font-size:11px;text-transform:uppercase;letter-spacing:.08em;padding:0 10px 10px}
+  td{padding:12px 10px;border-top:1px solid var(--line);vertical-align:middle}
+  td.dr{max-width:380px}
+  a.drl{color:var(--fg);text-decoration:none;border-bottom:1px solid transparent}
+  a.drl:hover{color:var(--or2);border-bottom-color:var(--or2)}
+  a.drl .ext{font-size:11px;color:var(--dim);margin-left:6px}
+  a.drl:hover .ext{color:var(--or2)}
+  td.r,th.r{text-align:right}
+  .more{all:unset;cursor:pointer;color:var(--or2);font-size:12px;margin-top:12px;display:inline-block}
+  .health{margin-top:16px;font-size:12px;color:var(--dim);line-height:1.7}
+  .health b{color:var(--muted);font-weight:500}
+  #tip{position:fixed;pointer-events:none;background:#fff;color:var(--fg);box-shadow:var(--shadow);border:1px solid var(--line);padding:8px 10px;border-radius:8px;font-size:12px;opacity:0;transition:opacity .12s;z-index:9}
+  @media (max-width:1100px){.kpis{grid-template-columns:repeat(2,1fr)}.row2,.row3{grid-template-columns:1fr}}
+  /* tablet & phone: sidebar becomes a top bar (was only below 760px, so tablets ran off the screen) */
+  @media (max-width:1024px){
+    .app{grid-template-columns:1fr}
+    .side{position:static;height:auto;padding:18px;gap:16px}
+    .months{flex-direction:row;overflow-x:auto;scrollbar-width:none}
+    .months::-webkit-scrollbar{display:none}
+    .mbtn{padding:8px 12px;gap:8px;flex:none}
+    .mbtn.all{margin-bottom:0}
+    .side-foot,.nav-h{display:none}
+  }
+  @media (max-width:820px){td.hide-m,th.hide-m{display:none}}
+  @media (max-width:760px){
+    main{padding:20px 16px 40px}
+    h1{font-size:24px}.kpi .v{font-size:32px}
+    /* one swipeable row instead of wrapping onto 3 lines / cutting text off */
+    .filters{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none}
+    .filters::-webkit-scrollbar{display:none}
+    .pill,.filters .lab{flex:none}
+    .strip{grid-template-columns:none;grid-auto-flow:column;grid-auto-columns:minmax(128px,1fr);overflow-x:auto;scrollbar-width:none}
+    .strip::-webkit-scrollbar{display:none}
+  }
+</style>
+</head>
+<body>
+<div class="app">
+  <aside class="side">
+    <div class="brand"><div class="logo">DT</div><div><b>Design Team</b><span>DR Dashboard</span></div></div>
+    <div><div class="nav-h">Month</div><nav class="months" id="months" aria-label="Choose month"></nav></div>
+    <div class="side-foot">Data: <a href="https://drive.google.com/drive/folders/1rr6kEhm_DtRlSWPU6C6lRQheCNlaYU6D" target="_blank" rel="noopener">Design Team JSR sheets</a><br>Updates at 10:36 AM and 4:36 PM</div>
+  </aside>
+
+  <main>
+    <header>
+      <div>
+        <p class="eyebrow">Design Team · DR Dashboard</p>
+        <h1 id="mname">—</h1>
+        <p class="sub" id="headline">—</p>
+      </div>
+      <div class="stamp"><i></i><span id="stamp">—</span></div>
+    </header>
+
+    <div class="filters" id="brandf" role="group" aria-label="Filter by brand"></div>
+
+    <section class="grid kpis">
+      <div class="card kpi"><h3><span id="k-total-h">Total DRs</span></h3><div class="v" id="k-total">—</div><div class="n" id="k-total-n">—</div></div>
+      <div class="card kpi hero"><h3>Done</h3><div class="v" id="k-done">—</div><div class="n" id="k-done-n">—</div></div>
+      <div class="card kpi"><h3>Pending</h3><div class="v" id="k-open">—</div><div class="n" id="k-open-n">—</div></div>
+      <div class="card kpi alert"><h3>Late</h3><div class="v" id="k-od">—</div><div class="n" id="k-od-n">—</div></div>
+    </section>
+
+    <section class="card sec">
+      <h3>Monthly trend <small id="strip-n">—</small></h3>
+      <div class="strip" id="strip"></div>
+    </section>
+
+    <section class="card sec">
+      <h3>Turnaround <small id="ta-n">From Basecamp</small></h3>
+      <div id="ta"></div>
+    </section>
+
+    <section class="grid row2 sec">
+      <div class="card">
+        <h3>Brands <small id="brand-n">—</small></h3>
+        <div class="bgrid" id="brands"></div>
+      </div>
+      <div class="card">
+        <h3>Status</h3>
+        <div id="donut"></div>
+      </div>
+    </section>
+
+    <section class="grid row3 sec">
+      <div class="card"><h3>Team <small>done / total</small></h3><div class="bars" id="team"></div></div>
+      <div class="card"><h3>DR types</h3><div id="type"></div></div>
+    </section>
+
+    <section class="sec">
+      <div class="card">
+        <h3>Pending DRs <small id="att-n">—</small></h3>
+        <div id="att"></div>
+      </div>
+    </section>
+    <section class="sec">
+      <div class="card">
+        <h3>Closed DRs <small id="cl-n">—</small></h3>
+        <div id="cl"></div>
+      </div>
+      <p class="health" id="health"></p>
+    </section>
+  </main>
+</div>
+<div id="tip"></div>
+
+<script src="data.js"></script>
+<script>
+(function(){
+  /* People who have left the team. From the given month on, their name is
+     removed from DRs (a DR left with no owner shows as "Unassigned").
+     Earlier months keep their name. month: 0 = Jan ... 10 = Nov */
+  const TEAM_EXITS = [ ];   // People who left, e.g. {name:"Asha", year:2026, month:10}  (month is 0-based: 10 = November)
+
+  /* Basecamp: a DR counts as Done if the sheet OR Basecamp says so. Close date and
+     open date come from Basecamp (to-do created / ticked off). */
+  const BC_URL = "/api/basecamp/closed";
+  let BC = null;          // {todoId: {created, closed}} once loaded
+
+  const D = window.DR_DATA;
+  const MN = ["january","february","march","april","may","june","july","august","september","october","november","december"];
+  const MS = MN.map(m=>m.slice(0,3));
+  const $ = id => document.getElementById(id);
+  const el = (tag, cls, txt) => { const e=document.createElement(tag); if(cls) e.className=cls; if(txt!=null) e.textContent=txt; return e; };
+  const cap=s=>s[0].toUpperCase()+s.slice(1);
+
+  const pdate = v => v ? new Date(v+"T00:00:00Z") : null;
+  function normStatus(s){
+    const t=(s||"").trim().toLowerCase();
+    if(t==="done"||t==="approved") return "Done";
+    if(t==="in progress"||t==="wip"||t==="kv done"||t==="adapts pending") return "In progress";
+    if(t==="approval pending") return "In review";
+    if(t.startsWith("on hold")) return "On hold";
+    if(t==="incomplete brief"||t==="incoplete brief"||t==="awaiting for dr") return "Waiting";
+    if(t==="pending") return "Not started";
+    if(t==="pending review") return "In review";
+    if(t==="waiting") return "Waiting";
+    if(t==="na"||t==="scrapped") return "Dropped";
+    if(t==="not started") return "Not started";
+    return t ? s.trim() : "Not started";
+  }
+  function normType(s){
+    const t=(s||"").trim().toLowerCase();
+    if(!t) return null;
+    if(t==="ai") return "AI";
+    if(t.startsWith("special")) return "Special";
+    if(t==="adapt"||t==="adapts") return "Adapts";
+    if(t.startsWith("add on")) return "Add on";
+    if(t.startsWith("redesign")) return "Redesign";
+    if(t==="3d") return "3D";
+    return cap(t);
+  }
+  function normBrand(s){
+    const t=(s||"").trim(); if(!t) return "No brand";
+    const u=t.toUpperCase();
+    const MAP={SUGARPOP:"SUGAR POP",QUENCH:"Quench",MOLTEN:"Molten"};   // brand clean-up, key = brand in CAPITALS without spaces
+    return MAP[u.replace(/\s+/g,"")] || t;
+  }
+  const exitedBy=(name,y,m)=>TEAM_EXITS.some(x=>x.name.toLowerCase()===name.toLowerCase() && (y*12+m)>=(x.year*12+x.month));
+
+  /* ---------- month tabs (already structured by build_data.py) ---------- */
+  const tabs=[];
+  D.tabs.forEach(tab=>{
+    const tm=tab.month, year=tab.year;
+    const items=tab.rows.map(r=>{
+      let owners=(r.assigned||"").split(/,|&|\//).map(x=>x.trim()).filter(Boolean);
+      const before=owners.length;
+      owners=owners.filter(o=>!exitedBy(o,year,tm));
+      return {
+        name:r.name, link:r.link, sheetRaised:pdate(r.raised), sheetDue:pdate(r.due), todo:(r.link||"").match(/\/todos\/(\d+)/)?.[1]||null, sheetStatus:normStatus(r.status), raised:pdate(r.raised), due:pdate(r.due),
+        brand:normBrand(r.brand), owners: owners.length?owners:["Not assigned"], orphaned: before>0&&owners.length===0,
+        type: tab.hasType ? normType(r.type) : null, status:normStatus(r.status), tab:tabs.length
+      };
+    });
+    tabs.push({name:tab.tab, m:tm, y:year, hasType:tab.hasType, items});
+  });
+
+  /* All months = every DR once: a DR carried into later tabs counts once, at its latest status.
+     Matched by its Basecamp to-do (so a renamed DR is still one DR); rows without a link match by name + brand.
+     (Two rows inside one tab are kept as two unless they point to the same to-do.) */
+  function uniqueAll(){
+    const latest=new Map();
+    tabs.forEach((t,ti)=>{
+      const seen=new Map();
+      t.items.forEach(i=>{const k=i.todo ? "bc:"+i.todo : i.name.toLowerCase().replace(/\s+/g," ")+"|"+i.brand; if(!seen.has(k)) seen.set(k,[]); seen.get(k).push(i);});
+      seen.forEach((arr,k)=>latest.set(k,arr));
+    });
+    return [].concat(...latest.values());
+  }
+  const ALL = uniqueAll();
+  const BRANDS = (()=>{const c=new Map(); ALL.forEach(i=>c.set(i.brand,(c.get(i.brand)||0)+1)); return [...c.entries()].sort((a,b)=>(a[0]==="No brand")-(b[0]==="No brand")||b[1]-a[1]).map(e=>e[0]);})();
+
+  /* ---------- helpers ---------- */
+  const ist=new Date(Date.now()+330*60000);
+  const today=Date.UTC(ist.getUTCFullYear(),ist.getUTCMonth(),ist.getUTCDate());
+  const isDone=i=>i.status==="Done", isScr=i=>i.status==="Dropped", isOpen=i=>!isDone(i)&&!isScr(i);
+  const odDays=i=> (isOpen(i)&&i.due) ? Math.round((today-i.due)/864e5) : 0;
+  const isOD=i=>odDays(i)>0;
+  const istDay=iso=>{const d=new Date(new Date(iso).getTime()+330*60000);return Date.UTC(d.getUTCFullYear(),d.getUTCMonth(),d.getUTCDate());};
+  const openedOn=i=> i.raised ? +i.raised : null;
+  const daysOpen=i=>{const o=openedOn(i); if(o==null) return null; const end=i.bcClosed?istDay(i.bcClosed):today; return Math.max(0,Math.round((end-o)/864e5));};
+  const plural=(n,w)=>`${n} ${w}${n===1?"":"s"}`;
+  function applyBC(){
+    tabs.forEach(t=>t.items.forEach(i=>{
+      const b = BC && i.todo ? BC[i.todo] : null;
+      i.bcCreated = b ? b.created : null; i.bcClosed = b ? b.closed : null; i.bcKnown = !!b;
+      i.closedBy = b ? b.closedBy : null;
+      i.raised = b && b.created ? new Date(istDay(b.created)) : i.sheetRaised;   // Basecamp first, sheet as fallback
+      i.due = b && b.due ? pdate(b.due) : i.sheetDue;
+      i.reused = !!(b && b.created && i.sheetRaised && (+i.sheetRaised - istDay(b.created)) > 30*864e5);
+      i.status = (b && b.closed) ? "Done" : i.sheetStatus;
+      i.bcBatch = false;
+    }));
+    /* Batch clean-ups: 5+ to-dos ticked off within 30 minutes, where most of them (60%+) were already a week or
+       more past due, are bookkeeping, not deliveries — turnaround skips them. A burst of on-time deliveries is kept. */
+    if(BC){
+      const closed=Object.values(BC).filter(v=>v.closed).map(v=>({t:new Date(v.closed).getTime(), late: v.due ? (istDay(v.closed)-Date.parse(v.due+"T00:00:00Z"))/864e5 >= 7 : false})).sort((a,b)=>a.t-b.t);
+      const batch=new Set(); const W=30*60000;
+      for(let a=0,b=0;b<closed.length;b++){
+        while(closed[b].t-closed[a].t>W) a++;
+        const grp=closed.slice(a,b+1);
+        if(grp.length>=5 && grp.filter(x=>x.late).length/grp.length>=0.6) grp.forEach(x=>batch.add(x.t));
+      }
+      tabs.forEach(t=>t.items.forEach(i=>{ if(i.bcClosed && batch.has(new Date(i.bcClosed).getTime())) i.bcBatch=true; }));
+    }
+  }
+  const fmt=d=>d? d.getUTCDate()+" "+cap(MS[d.getUTCMonth()]) : "—";
+  const pct=(a,b)=>b?Math.round(a*100/b):0;
+  const tip=$("tip");
+  function showTip(e,t){tip.textContent=t;tip.style.opacity=1;const x=Math.min(e.clientX+12,innerWidth-tip.offsetWidth-8);tip.style.left=x+"px";tip.style.top=(e.clientY+14)+"px";}
+  function hideTip(){tip.style.opacity=0;}
+
+  const fa=new Date(D.fetchedAt);
+  $("stamp").textContent="Updated "+fa.toLocaleString("en-IN",{day:"numeric",month:"short",hour:"numeric",minute:"2-digit",timeZone:"Asia/Kolkata"});
+
+  /* ---------- state ---------- */
+  let cur = tabs.length-1;   // -1 = all months
+  let brand = "All";
+  const byBrand = items => brand==="All" ? items : items.filter(i=>i.brand===brand);
+  const periodItems = () => cur<0 ? ALL : tabs[cur].items;
+
+  /* ---------- month nav (sidebar) ---------- */
+  const nav=$("months");
+  function drawNav(){
+    nav.replaceChildren();
+    const a=el("button","mbtn all"+(cur<0?" on":"")); a.type="button";
+    a.append(el("span",null,"All months"), el("span","c",String(byBrand(ALL).length)));
+    a.onclick=()=>{cur=-1;render();}; nav.append(a);
+    tabs.forEach((t,i)=>{
+      const b=el("button","mbtn"+(i===cur?" on":"")); b.type="button";
+      b.append(el("span",null,cap(t.name)), el("span","c",String(byBrand(t.items).length)));
+      b.setAttribute("aria-current",i===cur?"true":"false");
+      b.onclick=()=>{cur=i;render();}; nav.append(b);
+    });
+  }
+  /* ---------- brand pills ---------- */
+  function drawBrandPills(){
+    const f=$("brandf"); f.replaceChildren(); f.append(el("span","lab","Brand"));
+    ["All",...BRANDS].forEach(b=>{const p=el("button","pill"+(b===brand?" on":""),b); p.type="button"; p.setAttribute("aria-pressed",b===brand); p.onclick=()=>{brand=b;render();}; f.append(p);});
+  }
+
+  function bars(host, groups){
+    host.replaceChildren();
+    if(!groups.length){host.append(el("div","empty","No DRs"));return;}
+    const max=Math.max(...groups.map(g=>g.total));
+    groups.forEach(g=>{
+      const r=el("div","bar-row"), tr=el("div","track");
+      const s1=el("div","seg"); s1.style.width=(g.done/max*100)+"%"; s1.style.background="var(--g-pur)";
+      const s2=el("div","seg"); s2.style.width=((g.total-g.done)/max*100)+"%"; s2.style.background="var(--grey)";
+      tr.append(s1,s2);
+      tr.onmousemove=e=>showTip(e,`${g.k}: ${g.done} of ${g.total} done${g.od?`, ${g.od} late`:""}`); tr.onmouseleave=hideTip;
+      r.append(el("div","lbl",g.k), tr, el("div","num",g.done+"/"+g.total));
+      host.append(r);
+    });
+  }
+  function groupBy(items,keyFn){
+    const m=new Map();
+    items.forEach(i=>[].concat(keyFn(i)).forEach(k=>{
+      if(!m.has(k)) m.set(k,{k,total:0,done:0,od:0});
+      const g=m.get(k); g.total++; if(isDone(i)) g.done++; if(isOD(i)) g.od++;
+    }));
+    return [...m.values()].sort((a,b)=>(a.k==="Not assigned")-(b.k==="Not assigned")||b.total-a.total);
+  }
+
+  /* ---------- month-on-month strip ---------- */
+  function strip(){
+    const host=$("strip"); host.replaceChildren();
+    tabs.forEach((t,i)=>{
+      const it=byBrand(t.items), n=it.length, dn=it.filter(isDone).length;
+      const prev=i>0?byBrand(tabs[i-1].items).length:null;
+      const c=el("button","mc"+(i===cur?" on":"")); c.type="button";
+      c.append(el("span","mn",cap(t.name)), el("span","mv",String(n)));
+      const d=el("span","md");
+      const live = i===tabs.length-1 && ist.getUTCFullYear()===t.y && ist.getUTCMonth()===t.m;
+      if(live){ d.append(el("b","live","In progress")); }
+      else if(prev===null){ d.textContent="First month"; }
+      else{ const df=n-prev; const b=el("b",null,df===0?"Same as":`${Math.abs(df)} ${df>0?"more":"fewer"}`); d.append(b, document.createTextNode((df===0?" ":" than ")+cap(MS[tabs[i-1].m]))); }
+      const mini=el("div","mini"), bar=el("i"); bar.style.width=pct(dn,n)+"%"; mini.append(bar);
+      c.append(d, mini, el("span","mf",pct(dn,n)+"% done"));
+      c.onclick=()=>{cur=i;render();};
+      host.append(c);
+    });
+    $("strip-n").textContent = (brand==="All"?"":brand+" · ")+"Click a month to see details";
+  }
+
+  /* ---------- brand cards ---------- */
+  function brandCards(){
+    const host=$("brands"); host.replaceChildren();
+    const items=periodItems(); const tot=items.length||1;
+    const g=groupBy(items,i=>i.brand).sort((a,b)=>(a.k==="No brand")-(b.k==="No brand"));
+    g.forEach(x=>{
+      const c=el("button","bc"+(x.k===brand?" on":"")); c.type="button";
+      const sh=el("div","share"), s=el("i"); s.style.width=pct(x.total,tot)+"%"; sh.append(s);
+      c.append(el("span","bn",x.k), el("span","bv",String(x.total)), sh, el("span","bs",`${pct(x.total,tot)}% of DRs · ${pct(x.done,x.total)}% done`));
+      c.onclick=()=>{brand = brand===x.k ? "All" : x.k; render();};
+      host.append(c);
+    });
+    $("brand-n").textContent = "Click a brand to filter";
+  }
+
+  /* ---------- donut ---------- */
+  function donut(items){
+    const host=$("donut"); host.replaceChildren();
+    const order=[["Done","#2FCFC0"],["In review","#7C6CF2"],["In progress","#5B9DF0"],["Waiting","#C4BBF7"],["On hold","#AEB3C9"],["Not started","#DCDEEA"],["Dropped","#EEEEF4"]];
+    const counts=order.map(([k,c])=>({k,c,n:items.filter(i=>i.status===k).length})).filter(x=>x.n);
+    const other=items.filter(i=>!order.some(o=>o[0]===i.status)).length; if(other) counts.push({k:"Other",c:"#C9CCDA",n:other});
+    const tot=items.length||1, R=62, C=2*Math.PI*R, ns="http://www.w3.org/2000/svg";
+    const svg=document.createElementNS(ns,"svg"); svg.setAttribute("viewBox","0 0 180 180"); svg.setAttribute("width","100%"); svg.style.maxWidth="190px"; svg.style.display="block"; svg.style.margin="0 auto";
+    const set=(e,a)=>{for(const k in a)e.setAttribute(k,a[k]);return e;};
+    svg.append(set(document.createElementNS(ns,"circle"),{cx:90,cy:90,r:R,fill:"none",stroke:"#F1F0FA","stroke-width":20}));
+    let off=0;
+    counts.forEach(s=>{
+      const c=set(document.createElementNS(ns,"circle"),{cx:90,cy:90,r:R,fill:"none",stroke:s.c,"stroke-width":20,"stroke-dasharray":`${Math.max(C*s.n/tot-2,0.5)} ${C}`,"stroke-dashoffset":-off,transform:"rotate(-90 90 90)"});
+      c.addEventListener("mousemove",e=>showTip(e,`${s.k}: ${s.n}`)); c.addEventListener("mouseleave",hideTip);
+      svg.append(c); off+=C*s.n/tot;
+    });
+    const t1=set(document.createElementNS(ns,"text"),{x:90,y:92,"text-anchor":"middle","font-size":30,"font-weight":600,fill:"#2B2D42"}); t1.textContent=pct(items.filter(isDone).length,items.length)+"%";
+    const t2=set(document.createElementNS(ns,"text"),{x:90,y:112,"text-anchor":"middle","font-size":11,fill:"#7D8199"}); t2.textContent="done";
+    svg.append(t1,t2); host.append(svg);
+    const lg=el("div","legend"); lg.style.flexWrap="wrap"; lg.style.justifyContent="center"; lg.style.marginTop="14px";
+    counts.forEach(s=>{const sp=el("span",null,`${s.k} ${s.n}`); sp.style.setProperty("--c",s.c); lg.append(sp);});
+    host.append(lg);
+  }
+
+  /* ---------- turnaround ---------- */
+  function turnaround(items){
+    const host=$("ta"); host.replaceChildren();
+    if(!BC){ host.append(el("div","empty", BC===false ? (window.__localPreview ? "Turnaround comes from Basecamp and shows on the live site only." : "Turnaround isn't available right now. It will be back after the next update.") : "Loading turnaround from Basecamp…")); return; }
+    const closed=items.filter(i=>i.bcClosed && !i.bcBatch && !i.reused && openedOn(i)!=null && istDay(i.bcClosed)>=openedOn(i));
+    const skipped=items.filter(i=>i.bcClosed && i.bcBatch).length, reusedN=items.filter(i=>i.bcClosed && i.reused && !i.bcBatch).length;
+    if(!closed.length){ host.append(el("div","empty","No DRs closed in Basecamp for this view yet.")); return; }
+    const days=closed.map(daysOpen).sort((a,b)=>a-b);
+    const avg=Math.round(days.reduce((a,b)=>a+b,0)/days.length*10)/10;
+    const med=days[Math.floor(days.length/2)];
+    const slow=closed.slice().sort((a,b)=>daysOpen(b)-daysOpen(a))[0];
+    const w=el("div","ta");
+    const tile=(v,l,sub)=>{const t=el("div","t"); t.append(el("b",null,v), el("span",null,l)); if(sub) t.append(el("small",null,sub)); return t;};
+    w.append(tile(plural(med,"day"),"Typical time to close",`Average: ${plural(avg,"day")}`));
+    w.append(tile(plural(daysOpen(slow),"day"),"Slowest to close",slow.name));
+    const pend=items.filter(isOpen).filter(i=>daysOpen(i)!=null).sort((a,b)=>daysOpen(b)-daysOpen(a))[0];
+    w.append(pend ? tile(plural(daysOpen(pend),"day"),"Longest still pending",pend.name) : tile("—","Longest still pending","Nothing pending"));
+    const per=new Map(); closed.forEach(i=>i.owners.forEach(o=>{ if(o==="Not assigned") return; const a=per.get(o)||[]; a.push(daysOpen(i)); per.set(o,a); }));
+    const pp=el("div","t wide"), list=el("div","ppl");
+    [...per.entries()].map(([k,a])=>{const s=a.slice().sort((x,y)=>x-y);return [k,s[Math.floor(s.length/2)],a.length];}).sort((a,b)=>a[1]-b[1]).forEach(([k,v,n])=>{const r=el("div"); r.append(el("span",null,k), el("em",null,`${plural(v,"day")} typical · ${n} closed`)); list.append(r);});
+    pp.append(el("span",null,"Typical time to close, by person")); pp.firstChild.style.marginTop="0"; pp.firstChild.style.marginBottom="10px"; pp.append(list);
+    w.append(pp); host.append(w);
+    const nc=[]; if(skipped) nc.push(`${plural(skipped,"DR")} ticked off in a batch clean-up (5+ within 30 minutes, mostly long overdue)`); if(reusedN) nc.push(`${plural(reusedN,"DR")} on an old, reused Basecamp to-do (created 30+ days before the DR was raised)`);
+    if(nc.length) host.append(el("p","health","Not counted: "+nc.join(" · ")+". Their dates are still shown under Closed DRs."));
+    $("ta-n").textContent=`${closed.length} closed DRs · created → ticked off, from Basecamp`;
+  }
+
+  function drCell(i){
+    const nc=el("td","dr");
+    if(i.link){const a=el("a","drl",i.name); a.href=i.link; a.target="_blank"; a.rel="noopener"; a.title="Open in Basecamp"; a.append(el("span","ext","↗")); nc.append(a);} else nc.textContent=i.name;
+    return nc;
+  }
+  const fmtDT=iso=>{const d=new Date(iso); return d.toLocaleDateString("en-IN",{day:"numeric",month:"short",timeZone:"Asia/Kolkata"});};
+
+  /* ---------- closed DRs ---------- */
+  function closedTable(items){
+    const host=$("cl"); host.replaceChildren();
+    if(!BC){ host.append(el("div","empty", BC===false ? (window.__localPreview ? "Closed dates come from Basecamp and show on the live site only." : "Closed dates aren't available right now.") : "Loading from Basecamp…")); $("cl-n").textContent=""; return; }
+    const list=items.filter(i=>i.bcClosed).sort((a,b)=>new Date(b.bcClosed)-new Date(a.bcClosed));
+    $("cl-n").textContent= list.length ? "Most recently closed first" : "";
+    if(!list.length){ host.append(el("div","empty","No DRs ticked off in Basecamp for this view yet.")); return; }
+    const tb=el("table"), hd=el("tr");
+    [["DR",""],["Brand","hide-m"],["Created","hide-m"],["Due","hide-m"],["Closed",""],["Closed by","hide-m"],["Took","hide-m"],["","r"]].forEach(([h,c])=>hd.append(el("th",c,h)));
+    tb.append(el("thead")); tb.tHead.append(hd); const body=el("tbody"); tb.append(body);
+    let showAll=false;
+    const draw=()=>{
+      body.replaceChildren();
+      (showAll?list:list.slice(0,10)).forEach(i=>{
+        const tr=el("tr"), cd=istDay(i.bcClosed), took=openedOn(i)!=null?Math.round((cd-openedOn(i))/864e5):null;
+        tr.append(drCell(i), el("td","hide-m",i.brand), el("td","hide-m",fmt(i.raised)), el("td","hide-m",fmt(i.due)),
+          el("td",null,fmtDT(i.bcClosed)), el("td","hide-m",i.closedBy||"—"), el("td","hide-m",took==null||took<0?"—":plural(took,"day")));
+        const tc=el("td","r"); let tag;
+        if(i.bcBatch) tag=el("span","tag","Batch clean-up");
+        else if(i.due){ const late=Math.round((cd-+i.due)/864e5); tag=el("span","tag"+(late>0?" od":" ok"), late>0?`${plural(late,"day")} late`:late===0?"On due date":`${plural(-late,"day")} early`); }
+        else tag=el("span","tag","No due date");
+        if(i.reused) tag.title="Old, reused Basecamp to-do: created date may not be when this DR started";
+        tc.append(tag); tr.append(tc); body.append(tr);
+      });
+    };
+    draw(); host.append(tb);
+    if(list.length>10){const m=el("button","more",`Show all ${list.length}`); m.type="button"; m.onclick=()=>{showAll=!showAll; m.textContent=showAll?"Show less":`Show all ${list.length}`; draw();}; host.append(m);}
+  }
+
+  /* ---------- render ---------- */
+  function render(){
+    drawNav(); drawBrandPills();
+    const all = cur<0, t = all?null:tabs[cur];
+    const items = byBrand(periodItems());
+    const label = all ? "All months" : cap(t.name)+" "+t.y;
+    const h1=$("mname"); h1.replaceChildren(document.createTextNode(label)); if(brand!=="All") h1.append(el("span","b"," · "+brand));
+
+    const tot=items.length, dn=items.filter(isDone).length, op=items.filter(isOpen), od=items.filter(isOD), scr=items.filter(isScr).length;
+    $("k-total-h").textContent = "Total DRs";
+    $("k-total").textContent=tot;
+    if(all){ $("k-total-n").textContent="Each DR counted once"; }
+    else{
+      const carried=items.filter(i=>i.raised && (i.raised.getUTCFullYear()*12+i.raised.getUTCMonth()) < (t.y*12+t.m)).length;
+      $("k-total-n").textContent = carried ? `${carried} came from earlier months` : "All new this month";
+    }
+    $("k-done").textContent=dn;
+    $("k-done-n").textContent=`${pct(dn,tot)}% of total`+(scr?` · ${scr} dropped`:"");
+    $("k-open").textContent=op.length;
+    const pr=op.filter(i=>i.status==="In review").length, ip=op.filter(i=>i.status==="In progress").length, ns=op.filter(i=>i.status==="Not started").length, ot=op.length-pr-ip-ns;
+    $("k-open-n").textContent= op.length ? `${ip} in progress · ${pr} in review · ${ns} not started`+(ot?` · ${ot} on hold / waiting`:"") : "Nothing pending";
+    $("k-od").textContent=od.length;
+    const worst=od.length?Math.max(...od.map(odDays)):0;
+    $("k-od-n").textContent= od.length ? `Oldest: ${worst} day${worst>1?"s":""} late` : "Nothing late";
+
+    $("headline").textContent = !tot ? "No DRs for this filter." :
+      `${dn} of ${tot} DRs done (${pct(dn,tot)}%). ` + (od.length ? `${od.length} ${od.length>1?"are":"is"} late.` : op.length ? `${op.length} pending, none late.` : "Nothing pending.");
+
+    strip(); turnaround(items); brandCards(); donut(items);
+    bars($("team"), groupBy(items,i=>i.owners));
+
+    const th=$("type"); th.replaceChildren();
+    const typed=items.filter(i=>i.type!==null || (tabs[i.tab]&&tabs[i.tab].hasType));
+    if(!typed.length){ th.append(el("div","empty","DR type is tracked from September.")); }
+    else{
+      const g=groupBy(typed,i=>i.type||"Not set"); const w=el("div","tiles");
+      g.forEach(x=>{const d=el("div","tile"); d.append(el("b",null,String(x.total)), el("span",null,x.k)); w.append(d);});
+      th.append(w);
+      if(typed.length<items.length) th.append(el("p","health",`${items.length-typed.length} older DRs have no type.`));
+    }
+
+    const ah=$("att"); ah.replaceChildren();
+    const list=op.slice().sort((a,b)=>odDays(b)-odDays(a)||((a.due||0)-(b.due||0)));
+    $("att-n").textContent= list.length ? "Most late first" : "";
+    if(!list.length){ ah.append(el("div","empty","Nothing pending. All DRs here are done.")); }
+    else{
+      const tb=el("table"), hd=el("tr");
+      [["DR",""],["Brand","hide-m"],["Assigned",""],["Created","hide-m"],["Due","hide-m"],["Open for","hide-m"],["Status","hide-m"],["","r"]].forEach(([h,c])=>hd.append(el("th",c,h)));
+      tb.append(el("thead")); tb.tHead.append(hd); const body=el("tbody"); tb.append(body);
+      let showAll=false;
+      const draw=()=>{
+        body.replaceChildren();
+        (showAll?list:list.slice(0,8)).forEach(i=>{
+          const tr=el("tr"), d=odDays(i);
+          tr.append(drCell(i), el("td","hide-m",i.brand), el("td",null,i.owners.join(", ")), el("td","hide-m",fmt(i.raised)), el("td","hide-m",fmt(i.due)), el("td","hide-m",daysOpen(i)==null?"—":plural(daysOpen(i),"day")), el("td","hide-m",i.status));
+          const tc=el("td","r"); tc.append(el("span","tag"+(d>0?" od":""), d>0?`${d} day${d>1?"s":""} late`: d===0&&i.due?"Due today":i.due?`Due in ${-d} day${-d>1?"s":""}`:"No due date"));
+          tr.append(tc); body.append(tr);
+        });
+      };
+      draw(); ah.append(tb);
+      if(list.length>8){const m=el("button","more",`Show all ${list.length}`); m.type="button"; m.onclick=()=>{showAll=!showAll; m.textContent=showAll?"Show less":`Show all ${list.length}`; draw();}; ah.append(m);}
+    }
+
+    closedTable(items);
+    const orph=items.filter(i=>i.orphaned&&isOpen(i)).length;
+    const unowned=items.filter(i=>i.owners[0]==="Not assigned").length-items.filter(i=>i.orphaned).length;
+    const nodue=items.filter(i=>!i.due).length;
+    const notes=[]; if(orph) notes.push(`${orph} pending DR${orph>1?"s":""} need${orph>1?"":"s"} a new owner (person has left)`);
+    if(unowned>0) notes.push(`${unowned} not assigned`);
+    if(BC){ const a=items.filter(i=>i.bcKnown&&i.bcClosed&&i.sheetStatus!=="Done").length, b=items.filter(i=>i.bcKnown&&!i.bcClosed&&i.sheetStatus==="Done").length;
+      if(a) notes.push(`${a} ticked off in Basecamp but not marked Done in the sheet`); if(b) notes.push(`${b} marked Done in the sheet but still open in Basecamp`); } if(nodue) notes.push(`${nodue} ${nodue>1?"have":"has"} no due date`);
+    const hEl=$("health"); hEl.replaceChildren();
+    if(notes.length){ hEl.append(el("b",null,"To fix in the sheet: "), document.createTextNode(notes.join(" · ")+". Fixes show here after the next update.")); }
+  }
+  applyBC(); render();
+  const useBC = j => { BC = j && j.ok ? j.todos : false; applyBC(); render(); };
+  if (window.BC_DATA) useBC(window.BC_DATA);
+  else if (location.protocol.startsWith("http")) fetch(BC_URL).then(r=>r.ok?r.json():null).then(useBC).catch(()=>useBC(null));
+  else { BC=false; window.__localPreview=true; applyBC(); render(); }
+})();
+</script>
+</body>
+</html>
