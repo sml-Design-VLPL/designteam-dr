@@ -101,7 +101,7 @@
   .legend{display:flex;gap:16px;font-size:11px;color:var(--muted);margin-top:10px}
   .legend span::before{content:"";display:inline-block;width:8px;height:8px;border-radius:2px;margin-right:6px;background:var(--c)}
   .bars{display:flex;flex-direction:column;gap:12px}
-  .bar-row{display:grid;grid-template-columns:96px 1fr 50px;align-items:center;gap:10px;font-size:13px}
+  .bar-row{display:grid;grid-template-columns:132px 1fr 50px;align-items:center;gap:10px;font-size:13px}
   .bar-row .lbl{color:var(--fg);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
   .bar-row .num{text-align:right;color:var(--muted);font-variant-numeric:tabular-nums}
   .track{height:10px;background:transparent;display:flex;gap:2px}
@@ -285,6 +285,10 @@
     const MAP={SUGARPOP:"SUGAR POP",QUENCH:"Quench",MOLTEN:"Molten"};   // brand clean-up, key = brand in CAPITALS without spaces
     return MAP[u.replace(/\s+/g,"")] || t;
   }
+  /* Sheet names -> full names (key = name as written in the sheet, lower case) */
+  const TEAM = {"nitesh":"Nitesh Luthria","ankita":"Ankita Kambli","ankita k":"Ankita Kambli","ankita s":"Ankita Sarmalkar",
+    "gaurav":"Gaurav Pathade","sachin":"Sachin Bangal","sandrine":"Sandrine Monterio"};
+  const fullName=n=>TEAM[n.toLowerCase().replace(/\s+/g," ")]||n;
   const exitedBy=(name,y,m)=>TEAM_EXITS.some(x=>x.name.toLowerCase()===name.toLowerCase() && (y*12+m)>=(x.year*12+x.month));
 
   /* ---------- month tabs (already structured by build_data.py) ---------- */
@@ -292,7 +296,7 @@
   D.tabs.forEach(tab=>{
     const tm=tab.month, year=tab.year;
     const items=tab.rows.map(r=>{
-      let owners=(r.assigned||"").split(/,|&|\//).map(x=>x.trim()).filter(Boolean);
+      let owners=(r.assigned||"").split(/,|&|\//).map(x=>x.trim()).filter(Boolean).map(fullName);
       const before=owners.length;
       owners=owners.filter(o=>!exitedBy(o,year,tm));
       return {

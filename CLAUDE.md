@@ -35,7 +35,9 @@ One-page dashboard of the Design Team's DRs (deliverable requests), built from t
 - "All months" counts each DR once (by Basecamp to-do), at its latest status.
 - Counts per month as of 11 Nov 2026: Jan 360, Feb 346, Mar 365, Apr 313, May 327, Jun 275, Jul 301,
   Aug 403, Sep 365, Oct 438, Nov 92 (in progress).
-- Note: "Ankita" and "Ankita S" appear as two separate people in the sheets and are shown separately.
+- Team (full names shown on the page via `TEAM` in `index.html`; sheets use first names): Nitesh → Nitesh Luthria,
+  Ankita → Ankita Kambli, Ankita S → Ankita Sarmalkar, Gaurav → Gaurav Pathade, Sachin → Sachin Bangal,
+  Sandrine → Sandrine Monterio. Nisha and Cecil also appear in older rows but aren't on the team list.
 
 ## Working rules
 - The refresh changes only `data.js` and `bc_closed.json`. Don't edit `index.html`, `api/`, `scripts/` from it.
