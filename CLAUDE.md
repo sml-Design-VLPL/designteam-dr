@@ -37,7 +37,8 @@ One-page dashboard of the Design Team's DRs (deliverable requests), built from t
   Aug 403, Sep 365, Oct 438, Nov 92 (in progress).
 - Team (full names shown on the page via `TEAM` in `index.html`; sheets use first names): Nitesh → Nitesh Luthria,
   Ankita → Ankita Kambli, Ankita S → Ankita Sarmalkar, Gaurav → Gaurav Pathade, Sachin → Sachin Bangal,
-  Sandrine → Sandrine Monterio. Nisha and Cecil also appear in older rows but aren't on the team list.
+  Sandrine → Sandrine Monterio. Nisha was on the team till Sep 2026 (`TEAM_EXITS`: removed from Oct on).
+  Cecil is Video Team (`NOT_TEAM`: never shown; a DR only he was on shows "Not assigned").
 
 ## Working rules
 - The refresh changes only `data.js` and `bc_closed.json`. Don't edit `index.html`, `api/`, `scripts/` from it.
